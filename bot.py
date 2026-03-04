@@ -11,14 +11,17 @@ import sys
 sys.stdout.reconfigure(line_buffering=True)
 symbol = "PYTH-USD"
 
-
 def get_data():
 
     df = yf.download(
         symbol,
-        interval="4h",
+        interval="1h",
         period="120d"
     )
+
+    # garantir colunas 1D
+    for col in ["Open","High","Low","Close","Volume"]:
+        df[col] = df[col].squeeze()
 
     df.dropna(inplace=True)
 
