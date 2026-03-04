@@ -16,12 +16,20 @@ def get_data():
     df = yf.download(
         symbol,
         interval="1h",
-        period="120d"
+        period="120d",
+        auto_adjust=True
     )
 
-    # garantir colunas 1D
-    for col in ["Open","High","Low","Close","Volume"]:
-        df[col] = df[col].squeeze()
+    # garantir Series 1D
+    df = df.reset_index()
+
+    df["Open"] = df["Open"].astype(float)
+    df["High"] = df["High"].astype(float)
+    df["Low"] = df["Low"].astype(float)
+    df["Close"] = df["Close"].astype(float)
+    df["Volume"] = df["Volume"].astype(float)
+
+    df = df.set_index("Datetime", drop=True)
 
     df.dropna(inplace=True)
 
@@ -29,10 +37,11 @@ def get_data():
 
 
 def add_indicators(df):
+    print("Shape close:", df["Close"].shape)
+    print(type(df["Close"]))
+    df["rsi"] = RSIIndicator(close=df["Close"]).rsi()
 
-    df["rsi"] = RSIIndicator(df["Close"]).rsi()
-
-    macd = MACD(df["Close"])
+    macd = MACD(close=df["Close"])
     df["macd"] = macd.macd()
     df["macd_signal"] = macd.macd_signal()
 
