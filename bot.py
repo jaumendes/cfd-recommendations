@@ -7,7 +7,8 @@ from ta.momentum import RSIIndicator
 from ta.trend import MACD
 from sklearn.ensemble import RandomForestClassifier
 from scipy.signal import argrelextrema
-
+import sys
+sys.stdout.reconfigure(line_buffering=True)
 symbol = "PYTH-USD"
 
 
