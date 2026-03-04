@@ -10,7 +10,6 @@ from scipy.signal import argrelextrema
 import sys
 sys.stdout.reconfigure(line_buffering=True)
 symbol = "PYTH-USD"
-
 def get_data():
 
     df = yf.download(
@@ -20,16 +19,11 @@ def get_data():
         auto_adjust=True
     )
 
-    # garantir Series 1D
-    df = df.reset_index()
+    # remover multiindex
+    if isinstance(df.columns, pd.MultiIndex):
+        df.columns = df.columns.get_level_values(0)
 
-    df["Open"] = df["Open"].astype(float)
-    df["High"] = df["High"].astype(float)
-    df["Low"] = df["Low"].astype(float)
-    df["Close"] = df["Close"].astype(float)
-    df["Volume"] = df["Volume"].astype(float)
-
-    df = df.set_index("Datetime", drop=True)
+    df = df.astype(float)
 
     df.dropna(inplace=True)
 
@@ -37,8 +31,8 @@ def get_data():
 
 
 def add_indicators(df):
-    print("Shape close:", df["Close"].shape)
     print(type(df["Close"]))
+    print(df["Close"].shape)
     df["rsi"] = RSIIndicator(close=df["Close"]).rsi()
 
     macd = MACD(close=df["Close"])
