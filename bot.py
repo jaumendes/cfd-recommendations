@@ -115,6 +115,23 @@ def analyze():
     print("Alta:", round(prob[1]*100,2), "%")
     print("Baixa:", round(prob[0]*100,2), "%")
 
+    result = f"""
+    ------ MARKET ANALYSIS ------
+    Preço: {last_price}
+
+    Suportes: {supports.values}
+
+    Resistências: {resistances.values}
+
+    Alta: {round(prob[1]*100,2)} %
+    Baixa: {round(prob[0]*100,2)} %
+    """
+
+    print(result)
+
+    with open("signals.log", "a") as f:
+        f.write(result + "\n")
+
 
 def main():
 
